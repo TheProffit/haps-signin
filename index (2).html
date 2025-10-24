@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="H.A.P.S. Sign-In">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png?v=2">
+    <link rel="icon" type="image/png" sizes="512x512" href="haps-icon.png?v=2">
+    <title>H.A.P.S. Event Sign-In</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #fff5ee 0%, #ffffff 50%, #e0f2f1 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .admin-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #666;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .admin-toggle:hover {
+            background: #444;
+        }
+
+        .admin-toggle:active {
+            transform: scale(0.95);
+            background: #333;
+        }
+
+        .logo-container {
+            margin-bottom: 20px;
+        }
+
+        #logoDisplay {
+            max-width: 150px;
+            max-height: 150px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        #logoDisplay.visible {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .logo-upload-btn {
+            background: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .logo-upload-btn:active {
+            transform: scale(0.98);
+            background: #45a049;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 36px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 18px;
+            font-weight: 400;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            text-align: center;
+            display: none;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 8px;
+            letter-spacing: 0.3px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 18px;
+            transition: border-color 0.3s;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #26a69a;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #ff9966 0%, #26a69a 100%);
+            color: white;
+            padding: 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .admin-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+            display: none;
+        }
+
+        .admin-section.visible {
+            display: block;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .admin-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .export-btn, .end-day-btn {
+            background: #333;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            transition: all 0.3s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .end-day-btn {
+            background: #dc3545;
+        }
+
+        .export-btn:active {
+            transform: scale(0.98);
+            background: #222;
+        }
+
+        .end-day-btn:active {
+            transform: scale(0.98);
+            background: #c82333;
+        }
+
+        .entries-list {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .entry-item {
+            padding: 12px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #26a69a;
+        }
+
+        .entry-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 18px;
+        }
+
+        .entry-time {
+            color: #666;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .entry-details {
+            color: #555;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border: 2px solid #2196f3;
+            border-radius: 10px;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            color: #1976d2;
+            font-size: 18px;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .info-box p {
+            color: #555;
+            margin: 5px 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .modal-body {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel, .btn-confirm {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-cancel {
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        .btn-confirm {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-cancel:active {
+            transform: scale(0.95);
+            background: #e9ecef;
+        }
+
+        .btn-confirm:active {
+            transform: scale(0.95);
+            background: #c82333;
+        }
+
+        .status-message {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .status-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <button class="admin-toggle" id="adminToggleBtn">👤 Admin</button>
+            <div class="logo-container">
+                <img id="logoDisplay" alt="Organization Logo">
+                <input type="file" id="logoInput" accept="image/*" style="display: none;">
+                <button class="logo-upload-btn" type="button" id="logoUploadBtn">
+                    📷 Upload Logo
+                </button>
+            </div>
+            <h1>H.A.P.S.</h1>
+            <p class="subtitle">Hope And Recovery Services</p>
+        </div>
+
+        <div class="card">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h2 style="font-size: 42px; color: #26a69a; margin-bottom: 10px;">PLEASE SIGN IN</h2>
+                <p style="font-size: 20px; color: #666;">Fill out the form below and we'll be with you shortly</p>
+            </div>
+            
+            <div id="successMessage" class="success-message">
+                ✓ Thank you for signing in!<br>
+                <strong style="font-size: 22px; margin-top: 10px; display: block;">Please take a seat, we will be with you as soon as possible.</strong>
+            </div>
+
+            <div id="statusMessage" class="status-message"></div>
+
+            <form id="signInForm">
+                <div class="form-group">
+                    <label>Date</label>
+                    <input type="date" id="dateInput" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Name *</label>
+                    <input type="text" id="nameInput" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="emailInput" placeholder="your.email@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="phoneInput" placeholder="(555) 123-4567">
+                </div>
+
+                <div class="form-group">
+                    <label>What services are you interested in? Are you a CPC, Recovery Coach, or Volunteer?</label>
+                    <textarea id="servicesInput" placeholder="Enter your response" rows="3"></textarea>
+                </div>
+
+                <button class="submit-btn" type="submit" id="submitBtn">Sign In</button>
+            </form>
+
+            <div id="adminSection" class="admin-section">
+                <div class="admin-header">
+                    <h3 id="entryCount" style="margin: 0;">Today's Sign-Ins: 0</h3>
+                    <div class="admin-buttons">
+                        <button class="export-btn" type="button" id="exportBtn">💾 Export Today's CSV</button>
+                        <button class="end-day-btn" type="button" id="endDayBtn">🔒 End Day</button>
+                    </div>
+                </div>
+                
+                <div id="entriesList" class="entries-list"></div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>For Event Coordinators:</strong>
+            <p>• Data is stored locally on this device</p>
+            <p>• Click "👤 Admin" to view today's sign-ins</p>
+            <p>• Click "Export Today's CSV" to download current records</p>
+            <p>• Click "End Day" to archive today's data and start fresh</p>
+            <p>• CSV files are date-stamped and ready for Excel/Google Sheets</p>
+            <p>• Logo is saved and persists between sessions</p>
+        </div>
+    </div>
+
+    <!-- End Day Confirmation Modal -->
+    <div id="endDayModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">End Day and Archive Data?</div>
+            <div class="modal-body">
+                This will:
+                <ul style="margin: 10px 0 10px 20px; line-height: 1.8;">
+                    <li>Export today's sign-ins to a CSV file</li>
+                    <li>Archive the data for your records</li>
+                    <li>Clear the current sign-in list</li>
+                    <li>Prepare for tomorrow's entries</li>
+                </ul>
+                <strong>Total entries to archive: <span id="entriesToArchive">0</span></strong>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-cancel" id="modalCancelBtn">Cancel</button>
+                <button class="btn-confirm" id="modalConfirmBtn">End Day & Export</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let entries = [];
+        let adminMode = false;
+
+        // Initialize app when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== H.A.P.S. Sign-In App Starting ===');
+            
+            // Set today's date
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateInput').value = today;
+            console.log('Date set to:', today);
+
+            // Load saved logo
+            loadLogo();
+            
+            // Load today's entries
+            loadTodaysEntries();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            console.log('=== Initialization Complete ===');
+        });
+
+        // Setup all event listeners
+        function setupEventListeners() {
+            console.log('Setting up event listeners...');
+            
+            // Admin toggle button
+            document.getElementById('adminToggleBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Admin button clicked');
+                toggleAdmin();
+            });
+            
+            // Logo upload button
+            document.getElementById('logoUploadBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Logo upload button clicked');
+                document.getElementById('logoInput').click();
+            });
+            
+            // Logo file input
+            document.getElementById('logoInput').addEventListener('change', handleLogoUpload);
+            
+            // Sign in form submit
+            document.getElementById('signInForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                console.log('Form submitted');
+                handleSignIn();
+            });
+            
+            // Export button
+            document.getElementById('exportBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Export button clicked');
+                exportToCSV();
+            });
+            
+            // End day button
+            document.getElementById('endDayBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('End day button clicked');
+                showEndDayModal();
+            });
+            
+            // Modal buttons
+            document.getElementById('modalCancelBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                closeEndDayModal();
+            });
+            
+            document.getElementById('modalConfirmBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                confirmEndDay();
+            });
+            
+            console.log('Event listeners set up successfully');
+        }
+
+        // Load saved logo
+        function loadLogo() {
+            const savedLogo = localStorage.getItem('hapsLogo');
+            if (savedLogo) {
+                const logoDisplay = document.getElementById('logoDisplay');
+                logoDisplay.src = savedLogo;
+                logoDisplay.classList.add('visible');
+                console.log('Logo loaded from storage');
+            }
+        }
+
+        // Handle logo upload
+        function handleLogoUpload(e) {
+            console.log('Logo file selected');
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const logoDisplay = document.getElementById('logoDisplay');
+                    logoDisplay.src = event.target.result;
+                    logoDisplay.classList.add('visible');
+                    
+                    // Save to localStorage
+                    localStorage.setItem('hapsLogo', event.target.result);
+                    console.log('Logo saved to storage');
+                    showStatus('Logo uploaded successfully!');
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Load today's entries
+        function loadTodaysEntries() {
+            const today = new Date().toISOString().split('T')[0];
+            const savedEntries = localStorage.getItem('hapsEntries_' + today);
+            
+            if (savedEntries) {
+                try {
+                    entries = JSON.parse(savedEntries);
+                    console.log('Loaded', entries.length, 'entries for today');
+                    updateEntriesList();
+                } catch (e) {
+                    console.error('Error loading entries:', e);
+                    entries = [];
+                }
+            } else {
+                console.log('No entries found for today');
+                entries = [];
+            }
+        }
+
+        // Toggle admin view
+        function toggleAdmin() {
+            adminMode = !adminMode;
+            const adminSection = document.getElementById('adminSection');
+            
+            console.log('Admin mode toggled to:', adminMode);
+            
+            if (adminMode) {
+                adminSection.classList.add('visible');
+                updateEntriesList();
+            } else {
+                adminSection.classList.remove('visible');
+            }
+        }
+
+        // Handle sign in
+        function handleSignIn() {
+            console.log('=== Processing Sign In ===');
+            
+            const name = document.getElementById('nameInput').value.trim();
+            const email = document.getElementById('emailInput').value.trim();
+            const phone = document.getElementById('phoneInput').value.trim();
+            const date = document.getElementById('dateInput').value;
+            const services = document.getElementById('servicesInput').value.trim();
+
+            console.log('Form data:', { name, email, phone, date, services });
+
+            // Validation
+            if (!name) {
+                alert('Please enter your name');
+                document.getElementById('nameInput').focus();
+                return;
+            }
+
+            // Create entry object
+            const entry = {
+                id: Date.now(),
+                date: date,
+                name: name,
+                email: email,
+                phone: phone,
+                services: services,
+                timestamp: new Date().toISOString()
+            };
+
+            console.log('Creating new entry:', entry);
+
+            // Add to entries array
+            entries.push(entry);
+            
+            // Save to localStorage with today's date as key
+            const today = new Date().toISOString().split('T')[0];
+            try {
+                localStorage.setItem('hapsEntries_' + today, JSON.stringify(entries));
+                console.log('✓ Entry saved! Total entries:', entries.length);
+            } catch (e) {
+                console.error('Error saving to localStorage:', e);
+                alert('Error saving data. Please try again.');
+                return;
+            }
+
+            // Show success message
+            const successMsg = document.getElementById('successMessage');
+            successMsg.classList.add('show');
+            console.log('Success message shown');
+            
+            setTimeout(function() {
+                successMsg.classList.remove('show');
+                console.log('Success message hidden');
+            }, 5000);
+
+            // Clear form fields
+            document.getElementById('nameInput').value = '';
+            document.getElementById('emailInput').value = '';
+            document.getElementById('phoneInput').value = '';
+            document.getElementById('servicesInput').value = '';
+            
+            console.log('Form cleared');
+            
+            // Reset focus to name field
+            document.getElementById('nameInput').focus();
+
+            // Update admin display if visible
+            if (adminMode) {
+                updateEntriesList();
+            }
+            
+            console.log('=== Sign-in Complete ===');
+        }
+
+        // Update entries list display
+        function updateEntriesList() {
+            console.log('Updating entries list. Count:', entries.length);
+            
+            const entriesList = document.getElementById('entriesList');
+            const entryCount = document.getElementById('entryCount');
+
+            entryCount.textContent = 'Today\'s Sign-Ins: ' + entries.length;
+
+            if (entries.length === 0) {
+                entriesList.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">No sign-ins yet today</div>';
+                return;
+            }
+
+            // Display entries (newest first)
+            const reversedEntries = [...entries].reverse();
+            entriesList.innerHTML = reversedEntries.map(function(entry) {
+                const time = new Date(entry.timestamp).toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    hour12: true 
+                });
+                return '<div class="entry-item">' +
+                    '<div class="entry-name">' + escapeHtml(entry.name) + '</div>' +
+                    '<div class="entry-time">' + time + '</div>' +
+                    (entry.email ? '<div class="entry-details">📧 ' + escapeHtml(entry.email) + '</div>' : '') +
+                    (entry.phone ? '<div class="entry-details">📱 ' + escapeHtml(entry.phone) + '</div>' : '') +
+                    (entry.services ? '<div class="entry-details">💼 ' + escapeHtml(entry.services) + '</div>' : '') +
+                    '</div>';
+            }).join('');
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            console.log('=== Exporting CSV ===');
+            
+            if (entries.length === 0) {
+                alert('No entries to export');
+                return;
+            }
+
+            const date = document.getElementById('dateInput').value;
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, -5);
+            const filename = 'HAPS-SignIn-' + date + '-' + timestamp + '.csv';
+
+            // Create CSV content
+            const headers = ['Date', 'Time', 'Name', 'Email', 'Phone', 'Services/Role'];
+            const rows = entries.map(function(entry) {
+                const time = new Date(entry.timestamp).toLocaleTimeString('en-US', { 
+                    hour: 'numeric', 
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true 
+                });
+                return [
+                    entry.date,
+                    time,
+                    '"' + (entry.name || '').replace(/"/g, '""') + '"',
+                    entry.email || '',
+                    entry.phone || '',
+                    '"' + (entry.services || '').replace(/"/g, '""') + '"'
+                ].join(',');
+            });
+
+            const csvContent = [headers.join(',')].concat(rows).join('\n');
+            
+            // Create and download file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            console.log('✓ CSV exported:', filename);
+            showStatus('CSV file exported successfully!');
+        }
+
+        // Show end day modal
+        function showEndDayModal() {
+            if (entries.length === 0) {
+                alert('No entries to archive. Add some sign-ins first!');
+                return;
+            }
+            
+            document.getElementById('entriesToArchive').textContent = entries.length;
+            document.getElementById('endDayModal').classList.add('show');
+        }
+
+        // Close end day modal
+        function closeEndDayModal() {
+            document.getElementById('endDayModal').classList.remove('show');
+        }
+
+        // Confirm end day
+        function confirmEndDay() {
+            console.log('=== Ending Day ===');
+            
+            // Export CSV first
+            exportToCSV();
+            
+            // Archive to historical data
+            const today = new Date().toISOString().split('T')[0];
+            const archiveKey = 'hapsArchive_' + today;
+            localStorage.setItem(archiveKey, JSON.stringify({
+                date: today,
+                entries: entries,
+                archivedAt: new Date().toISOString()
+            }));
+            
+            console.log('Data archived to:', archiveKey);
+            
+            // Clear today's entries
+            localStorage.removeItem('hapsEntries_' + today);
+            entries = [];
+            
+            // Close modal
+            closeEndDayModal();
+            
+            // Update display
+            updateEntriesList();
+            adminMode = false;
+            document.getElementById('adminSection').classList.remove('visible');
+            
+            console.log('✓ Day ended and data archived');
+            showStatus('Day ended! Data has been exported and archived. Ready for tomorrow.');
+            
+            // Show success for longer
+            setTimeout(function() {
+                hideStatus();
+            }, 8000);
+        }
+
+        // Show status message
+        function showStatus(message) {
+            const statusMsg = document.getElementById('statusMessage');
+            statusMsg.textContent = message;
+            statusMsg.classList.add('show');
+            setTimeout(hideStatus, 4000);
+        }
+
+        // Hide status message
+        function hideStatus() {
+            const statusMsg = document.getElementById('statusMessage');
+            if (statusMsg) {
+                statusMsg.classList.remove('show');
+            }
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        console.log('✓ Script loaded successfully');
+    </script>
+</body>
+</html>
